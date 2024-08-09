@@ -1,24 +1,18 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import useSpotifyStore from "../store/useSpotifyStore";
 
 export const useAuth = () => {
-  const [accessToken, setAccessToken] = useState("");
-  const [error, setError] = useState(null);
+  const { setAccessToken } = useSpotifyStore();
 
   useEffect(() => {
-    // Token olish uchun so'rov yuboramiz
     axios
-      .get("http://localhost:5173/get-token") // Token olish uchun mos endpoint
+      .get(`${import.meta.env.VITE_BASE_URL}/get-token`)
       .then((res) => {
-        console.log(res.data); // Tekshirish uchun
-        setAccessToken(res.data.accessToken); // Tokenni holatga saqlash
-        setError(null); // Xatolik yo'q
+        setAccessToken(res.data.accessToken);
       })
       .catch((err) => {
-        console.error(err); // Xatolikni konsolga chiqarish
-        setError("Failed to fetch access token."); // Xatolikni holatda saqlash
+        console.error("Failed to fetch access token:", err);
       });
-  }, []);
-
-  return { accessToken, error };
+  }, [setAccessToken]);
 };
